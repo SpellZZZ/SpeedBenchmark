@@ -9,7 +9,8 @@ public class Head {
 
         Settings item = new Settings();
 
-        AppBody.window(item);
+        AppBody obj = new AppBody();
+                obj.window(item);
 
 
 

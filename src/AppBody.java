@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Locale;
 import javax.swing.*;
 
 
@@ -8,15 +7,40 @@ import javax.swing.*;
 
 class AppBody extends Frame implements ActionListener, WindowListener, KeyListener {
 
+
+
+    JTextField timeField = new JTextField(10);
+    JPanel panel = new JPanel();
+
+    Lsen l = new Lsen(timeField);
+    Timer t = new Timer(TIMER_DELAY, l);
+
+
+    void setTimer(){
+
+        timeField.setEditable(false);
+        timeField.setFocusable(false);
+
+        panel.add(new JLabel("Elapsed Time:"));
+        panel.add(timeField);
+
+    }
+    public void stopTimer(){t.stop();}
+
+
+
+    private static final int TIMER_DELAY = 15;
     int taps = 0;
     double BPM = 0;
-    int timeS = 5;
+
 
     // JTextField
-    TextField key1 = new TextField(2);
-    TextField key2 = new TextField(2);
-    TextField time = new TextField(2);
-    TextField podz = new TextField(2);
+    TextField key1 = new TextField("a",2);
+    TextField key2 = new TextField("s",2);
+    TextField time = new TextField("10",2);
+    TextField podz = new TextField("4",2);
+    public static String timeHold;
+    public static String timeHoldRightNow;
 
 
 
@@ -27,7 +51,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     JLabel lPodz = new JLabel("Podzielnik");
 
 
-    JLabel l = new JLabel(
+    JLabel la = new JLabel(
             "<html>" +
                     "<br/>" +
                     "<br/>" +
@@ -36,17 +60,19 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
                     "Taps: " + taps +
                     "<br/>" +
                     "BPM: " + BPM +
-                "</html>");
+                    "</html>");
 
 
 ////////////////////////////////////
 
-    //TextField text = new TextField(20);
+
     Button b = new Button("Start");;
-    //private int numClicks = 0;
+
 
 
     // default constructor
+    public AppBody(){}
+
     public AppBody(String title) {
 
         super(title);
@@ -64,22 +90,55 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         add(lTime);
         add(time);
         add(b);
-        add(l);
+        add(la);
+        add(panel);
 
 
         b.addActionListener(this);
-        b.addKeyListener(this);
+
 
     }
 
-    public static void window(Head.Settings item)
+    public void window(Head.Settings item)
     {
         // create a new frame to store text field and button
-
         AppBody myWindow = new AppBody("Stream");
         myWindow.setSize(400,200);
         myWindow.setVisible(true);
+        run();
 
+    }
+
+    public void run(){
+
+
+        while(1==1){
+
+
+            try{
+
+
+                   // System.out.println(Lsen.timeString);
+                    //System.out.println(timeHold);
+                    timeHoldRightNow =Lsen.timeString;
+
+                    if(Lsen.timeString.substring(1,3).compareTo(timeHold) == 0){
+
+                        System.out.println("bpm "+BPM);
+                        System.out.println("taps "+taps);
+                        b.setLabel("Start");
+                        b.removeKeyListener(this);
+                        t.stop();
+                        break;
+                    }
+
+
+            }catch (NullPointerException e) {
+
+            }
+
+
+        }
     }
 
 
@@ -90,17 +149,27 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
             b.setLabel("Stop");
-            //l.setText(
-                   // "<html>Your Keys: " + key1.getText() +" "+ key2.getText() +"<br/>Time: "+ time.getText()+"</html>" );
+            timeHold = time.getText();
+            setTimer();
+
+
+
+            b.addKeyListener(this);
+
+
+
+
+
+
 
 
         }
         if (s.equals("Stop")) {
 
             b.setLabel("Start");
+            t.stop();
 
-
-
+            b.removeKeyListener(this);
 
         }
 
@@ -111,45 +180,48 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     public void keyPressed(KeyEvent e) {
 
         int keyI = e.getKeyCode();
-        //System.out.println(key1.getText() +" "+ key2.getText() +" "+keyI);
+
         char keyC = (char)keyI;
-        //
+
         String key = String
                 .valueOf(keyC)
                 .toLowerCase();
-        //System.out.println(key1.getText() +" "+ key2.getText() +" "+keyC);
-        //System.out.println(key1.getText() +" "+ key2.getText() +" "+ key);
 
 
         String k1 = key1
                 .getText()
                 .toLowerCase();
+
         String k2 = key2
                 .getText()
                 .toLowerCase();
 
 
-        if (k1.compareTo(key) == 0) {
+        if (k1.compareTo(key) == 0 || k2.compareTo(key) == 0) {
+
+            t.start();
+
             taps++;
+
             String podzielnikS = podz.getText();
             int podzielnik = Integer.parseInt(podzielnikS);
+            String a = Lsen.timeString;
+            double timeS;
+            //System.out.println(a);
+
+            try{
+               timeS = Double.parseDouble(timeHoldRightNow);
+            }catch (NullPointerException gg){
+                timeS = 0.000001;
+            }
+
+
+            System.out.println(timeS);
 
             BPM = Calculate.getBPM(taps,podzielnik,timeS);
+            BPM = Math.round(BPM);
 
-            l.setText("<html>" +
-                    "<br/>" +
-                    "<br/>" +
-                    "Your Results:" +
-                    "<br/>" +
-                    "Taps: " + taps +
-                    "<br/>" +
-                    "BPM: " + BPM +
-                    "</html>");
-        }
-
-        if (k2.compareTo(key) == 0) {
-            taps++;
-            l.setText("<html>" +
+            la.setText("<html>" +
                     "<br/>" +
                     "<br/>" +
                     "Your Results:" +
@@ -180,57 +252,9 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
     public void keyReleased (KeyEvent e) {}
-
     public void keyTyped (KeyEvent e) {}
 }
 
 
-/* //ur
-List<double> result = GetErrorStatisticsArray(score.HitErrors);
 
-hint = String.Format("Accuracy:\nError: {0:0.00}ms - {1:0.00}ms avg\nUnstable Rate: {2:0.00}\n", result[0], result[1], result[4] * 10, result[6], result[5]);
 
-// input is a list of (user_hit_time - correct_time)
-internal List<double> GetErrorStatisticsArray(List<int> list)
-{
-    if (list == null || list.Count == 0)
-        return null;
-    List<double> result = new List<double>(4);
-    double total = 0, _total = 0, totalAll = 0;
-    int count = 0, _count = 0;
-    int max = 0, min = int.MaxValue;
-    for (int i = 0; i < list.Count; i++)
-    {
-        if (list[i] > max)
-            max = list[i];
-        if (list[i] < min)
-            min = list[i];
-        totalAll += list[i];
-        if (list[i] >= 0)
-        {
-            total += list[i];
-            count++;
-        }
-        else
-        {
-            _total += list[i];
-            _count++;
-        }
-    }
-    double avarage = totalAll / list.Count;
-    double variance = 0;
-    for (int i = 0; i < list.Count; i++)
-    {
-        variance += Math.Pow(list[i] - avarage, 2);
-    }
-    variance = variance / list.Count;
-    result.Add(_count == 0 ? 0 : _total / _count); //0
-    result.Add(count == 0 ? 0 : total / count); //1
-    result.Add(avarage); //2
-    result.Add(variance); //3
-    result.Add(Math.Sqrt(variance)); //4
-    result.Add(max); //5
-    result.Add(min); //6
-    return result;
-}
-*/

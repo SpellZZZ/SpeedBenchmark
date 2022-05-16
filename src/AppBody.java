@@ -8,24 +8,44 @@ import javax.swing.*;
 class AppBody extends Frame implements ActionListener, WindowListener, KeyListener {
 
 
+    public static boolean isRunning = false;
+    double timeS;
+    String podzielnikS;
+    int podzielnik;
 
-    JTextField timeField = new JTextField(10);
+    double timeFromFieldOld;
+
+    JTextField timeField = new JTextField(5);
     JPanel panel = new JPanel();
+    JPanel panelMain = new JPanel();
 
-    Lsen l = new Lsen(timeField);
-    Timer t = new Timer(TIMER_DELAY, l);
+    Lsen l ;
+    Timer t ;
 
 
     void setTimer(){
 
+        l = new Lsen(timeField);
+        t = new Timer(TIMER_DELAY, l);
         timeField.setEditable(false);
         timeField.setFocusable(false);
-
-        panel.add(new JLabel("Elapsed Time:"));
         panel.add(timeField);
 
+
     }
-    public void stopTimer(){t.stop();}
+    void setMenu(){
+        panelMain.add(lKey1);
+        panelMain.add(key1);
+        panelMain.add(lKey2);
+        panelMain.add(key2);
+        panelMain.add(lPodz);
+        panelMain.add(podz);
+        panelMain.add(lTime);
+        panelMain.add(time);
+        panelMain.add(b);
+        panelMain.add(r);
+        panelMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    }
 
 
 
@@ -37,7 +57,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     // JTextField
     TextField key1 = new TextField("a",2);
     TextField key2 = new TextField("s",2);
-    TextField time = new TextField("10",2);
+    TextField time = new TextField("2",2);
     TextField podz = new TextField("4",2);
     public static String timeHold;
     public static String timeHoldRightNow;
@@ -52,7 +72,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
     JLabel la = new JLabel(
-            "<html>" +
+                "<html>" +
                     "<br/>" +
                     "<br/>" +
                     "Your Results:" +
@@ -66,7 +86,8 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 ////////////////////////////////////
 
 
-    Button b = new Button("Start");;
+    Button b = new Button("Start");
+    Button r = new Button("Restart");
 
 
 
@@ -81,70 +102,36 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         addWindowListener(this);
         addKeyListener(this);
 
-        add(lKey1);
-        add(key1);
-        add(lKey2);
-        add(key2);
-        add(lPodz);
-        add(podz);
-        add(lTime);
-        add(time);
-        add(b);
-        add(la);
+        setMenu();
+
+        add(panelMain).setBounds(10,10,100,10);
+        add(la).setBounds(10,10,100,10);
         add(panel);
 
 
         b.addActionListener(this);
+        r.addActionListener(this);
+
 
 
     }
 
-    public void window(Head.Settings item)
-    {
+    public void window(Head.Settings item) {
         // create a new frame to store text field and button
         AppBody myWindow = new AppBody("Stream");
-        myWindow.setSize(400,200);
+        myWindow.setSize(500,300);
         myWindow.setVisible(true);
-        run();
 
-    }
-
-    public void run(){
-
-
-        while(1==1){
-
-
-            try{
-
-
-                   // System.out.println(Lsen.timeString);
-                    //System.out.println(timeHold);
-                    timeHoldRightNow =Lsen.timeString;
-
-                    if(Lsen.timeString.substring(1,3).compareTo(timeHold) == 0){
-
-                        System.out.println("bpm "+BPM);
-                        System.out.println("taps "+taps);
-                        b.setLabel("Start");
-                        b.removeKeyListener(this);
-                        t.stop();
-                        break;
-                    }
-
-
-            }catch (NullPointerException e) {
-
-            }
-
-
-        }
+        //System.out.println(timeHoldRightNow );
     }
 
 
 
     public void actionPerformed(ActionEvent e) {
+
+
         String s = e.getActionCommand();
+
         if (s.equals("Start")) {
 
 
@@ -152,35 +139,96 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
             timeHold = time.getText();
             setTimer();
 
-
-
             b.addKeyListener(this);
 
+            podzielnikS = podz.getText();
+            podzielnik = Integer.parseInt(podzielnikS);
+
+            isRunning = true;
 
 
 
+            Thread t = new Thread() {
+                public void run(){
+                    if( isRunning == true ){
+
+                        for(;;){
+
+
+                            try{
+                                timeHoldRightNow = Lsen.timeString;
+                                timeS = Double.parseDouble(timeHoldRightNow);
+                            } catch (NullPointerException gg){
+                                timeS = 0.000001;
+                            }
+
+                            BPM = Calculate.getBPM(taps,podzielnik,timeS);
+                            BPM = Math.round(BPM);
+
+                            la.setText("<html>" +
+                                    "<br/>" +
+                                    "<br/>" +
+                                    "Your Results:" +
+                                    "<br/>" +
+                                    "Taps: " + taps +
+                                    "<br/>" +
+                                    "BPM: " + BPM +
+                                    "</html>");
+
+
+                            String timeFromField = time.getText();
+                            if(timeS >= Double.parseDouble(timeFromField) && timeFromFieldOld != timeS){
+                                timeFromFieldOld = timeS;
+                                System.out.println("bpm "+BPM);
+                                System.out.println("taps "+taps);
+                                timerRestart();
+                                break;
+                            }
 
 
 
+                            }
+                }
+
+
+                }
+            };
+            t.start();
 
         }
         if (s.equals("Stop")) {
 
             b.setLabel("Start");
-            t.stop();
+            stop();
 
             b.removeKeyListener(this);
+            isRunning = false;
 
+        }
+        if (s.equals("Restart")) {
+            timerRestart();
         }
 
 
     }
 
 
+    public void stop(){
+        t.stop();
+    }
+    public void timerRestart(){
+        isRunning = false;
+        taps = 0;
+        stop();
+        b.setLabel("Start");
+        b.removeKeyListener(this);
+        setTimer();
+    }
+
+
     public void keyPressed(KeyEvent e) {
 
         int keyI = e.getKeyCode();
-
         char keyC = (char)keyI;
 
         String key = String
@@ -199,49 +247,17 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
         if (k1.compareTo(key) == 0 || k2.compareTo(key) == 0) {
 
-            t.start();
+            if(!t.isRunning()) t.start();
 
             taps++;
-
-            String podzielnikS = podz.getText();
-            int podzielnik = Integer.parseInt(podzielnikS);
-            String a = Lsen.timeString;
-            double timeS;
-            //System.out.println(a);
-
-            try{
-               timeS = Double.parseDouble(timeHoldRightNow);
-            }catch (NullPointerException gg){
-                timeS = 0.000001;
-            }
-
-
-            System.out.println(timeS);
-
-            BPM = Calculate.getBPM(taps,podzielnik,timeS);
-            BPM = Math.round(BPM);
-
-            la.setText("<html>" +
-                    "<br/>" +
-                    "<br/>" +
-                    "Your Results:" +
-                    "<br/>" +
-                    "Taps: " + taps +
-                    "<br/>" +
-                    "BPM: " + BPM +
-                    "</html>");
         }
-
-
-
-        System.out.println(taps);
     }
-
 
     public void windowClosing(WindowEvent e) {
         dispose();
         System.exit(0);
     }
+
 
     public void windowOpened(WindowEvent e) {}
     public void windowActivated(WindowEvent e) {}
@@ -254,7 +270,4 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     public void keyReleased (KeyEvent e) {}
     public void keyTyped (KeyEvent e) {}
 }
-
-
-
 

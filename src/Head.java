@@ -5,12 +5,12 @@ public class Head {
 
     public static void main(String[] args) {
 
-        Scanner scan = new Scanner(System.in);
+        //Scanner scan = new Scanner(System.in);
 
         Settings item = new Settings();
 
         AppBody obj = new AppBody();
-                obj.window(item);
+              //  obj.window(item);
 
 
 

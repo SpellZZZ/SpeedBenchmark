@@ -24,7 +24,6 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
     void setTimer(){
-
         l = new Lsen(timeField);
         t = new Timer(TIMER_DELAY, l);
         timeField.setEditable(false);
@@ -44,7 +43,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         panelMain.add(time);
         panelMain.add(b);
         panelMain.add(r);
-        panelMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        //panelMain.setLayout(new FlowLayout());
     }
 
 
@@ -55,10 +54,11 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
     // JTextField
-    TextField key1 = new TextField("a",2);
-    TextField key2 = new TextField("s",2);
-    TextField time = new TextField("2",2);
-    TextField podz = new TextField("4",2);
+    JTextField key1 = new JTextField("b",2);
+    JTextField key2 = new JTextField("n",2);
+    JTextField time = new JTextField("2",2);
+    JTextField podz = new JTextField("4",2);
+
     public static String timeHold;
     public static String timeHoldRightNow;
 
@@ -71,16 +71,16 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     JLabel lPodz = new JLabel("Podzielnik");
 
 
+
     JLabel la = new JLabel(
                 "<html>" +
                     "<br/>" +
-                    "<br/>" +
-                    "Your Results:" +
                     "<br/>" +
                     "Taps: " + taps +
                     "<br/>" +
                     "BPM: " + BPM +
                     "</html>");
+
 
 
 ////////////////////////////////////
@@ -89,41 +89,64 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     Button b = new Button("Start");
     Button r = new Button("Restart");
 
-
+    JFrame window;
 
     // default constructor
-    public AppBody(){}
+   // public AppBody(){}
 
-    public AppBody(String title) {
+    public AppBody(/*String title*/) {
 
-        super(title);
-        setLayout(new FlowLayout());
 
-        addWindowListener(this);
-        addKeyListener(this);
+        //AppBody myWindow = new AppBody();
+        window =  new JFrame();
+
+
+        centreWindow(window);
+        //super(title);
+
+        //window =  new JFrame();
+
+        //window.setLayout(new FlowLayout());
+
+        window.setLayout(new BorderLayout(20, 15));
+
+        window.addWindowListener(this);
+        window.addKeyListener(this);
 
         setMenu();
 
-        add(panelMain).setBounds(10,10,100,10);
-        add(la).setBounds(10,10,100,10);
-        add(panel);
+        panelMain.setLayout(new FlowLayout());
+        la.setLayout(new FlowLayout());
+        panel.setLayout(new FlowLayout());
 
+        window.add(panelMain, BorderLayout.PAGE_START);
+        window.add(la,BorderLayout.CENTER);
+        window.add(panel,BorderLayout.PAGE_END);
+        window.setSize(500,300);
+        centreWindow(window);
 
         b.addActionListener(this);
         r.addActionListener(this);
 
 
-
+        window.setVisible(true);
     }
 
-    public void window(Head.Settings item) {
-        // create a new frame to store text field and button
-        AppBody myWindow = new AppBody("Stream");
-        myWindow.setSize(500,300);
+    public static void centreWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
+    }
+
+
+   /* public void window(Head.Settings item) {
+        new AppBody("Stream");
+        //AppBody myWindow = new AppBody();
+       /* myWindow.setSize(500,300);
         myWindow.setVisible(true);
-
-        //System.out.println(timeHoldRightNow );
-    }
+        centreWindow(myWindow);
+    }*/
 
 
 
@@ -167,8 +190,6 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
                             la.setText("<html>" +
                                     "<br/>" +
-                                    "<br/>" +
-                                    "Your Results:" +
                                     "<br/>" +
                                     "Taps: " + taps +
                                     "<br/>" +
@@ -270,4 +291,3 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     public void keyReleased (KeyEvent e) {}
     public void keyTyped (KeyEvent e) {}
 }
-

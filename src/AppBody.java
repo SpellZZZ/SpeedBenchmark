@@ -76,8 +76,6 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
     JLabel la = new JLabel(
             "<html>" +
-                    "<br/>" +
-                    "<br/>" +
                     "Taps: " + taps +
                     "<br/>" +
                     "BPM: " + BPM +
@@ -124,7 +122,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         window.add(panelMain, BorderLayout.NORTH);
         window.add(panelResult,BorderLayout.CENTER);
         window.add(panel,BorderLayout.SOUTH);
-        window.setSize(500,300);
+        window.setSize(500,180);
         centreWindow(window);
 
         b.addActionListener(this);
@@ -159,6 +157,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
         if (s.equals("Start")) {
 
+            setTimer();
 
             b.setLabel("Stop");
             timeHold = time.getText();
@@ -191,8 +190,6 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
                             BPM = Math.round(BPM);
 
                             la.setText("<html>" +
-                                    "<br/>" +
-                                    "<br/>" +
                                     "Taps: " + taps +
                                     "<br/>" +
                                     "BPM: " + BPM +
@@ -245,7 +242,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         stop();
         b.setLabel("Start");
         b.removeKeyListener(this);
-        setTimer();
+
     }
 
 

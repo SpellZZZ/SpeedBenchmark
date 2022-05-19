@@ -18,6 +18,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     JTextField timeField = new JTextField(5);
     JPanel panel = new JPanel();
     JPanel panelMain = new JPanel();
+    JPanel panelResult = new JPanel();
 
     Lsen l ;
     Timer t ;
@@ -26,6 +27,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     void setTimer(){
         l = new Lsen(timeField);
         t = new Timer(TIMER_DELAY, l);
+        timeField.setText("000.000");
         timeField.setEditable(false);
         timeField.setFocusable(false);
         panel.add(timeField);
@@ -73,7 +75,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
     JLabel la = new JLabel(
-                "<html>" +
+            "<html>" +
                     "<br/>" +
                     "<br/>" +
                     "Taps: " + taps +
@@ -92,14 +94,14 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
     JFrame window;
 
     // default constructor
-   // public AppBody(){}
+    // public AppBody(){}
 
     public AppBody(/*String title*/) {
 
-
+        panelResult.add(la);
         //AppBody myWindow = new AppBody();
         window =  new JFrame();
-
+        setTimer();
 
         centreWindow(window);
         //super(title);
@@ -116,12 +118,12 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
         setMenu();
 
         panelMain.setLayout(new FlowLayout());
-        la.setLayout(new FlowLayout());
+        panelResult.setLayout(new FlowLayout());
         panel.setLayout(new FlowLayout());
 
-        window.add(panelMain, BorderLayout.PAGE_START);
-        window.add(la,BorderLayout.CENTER);
-        window.add(panel,BorderLayout.PAGE_END);
+        window.add(panelMain, BorderLayout.NORTH);
+        window.add(panelResult,BorderLayout.CENTER);
+        window.add(panel,BorderLayout.SOUTH);
         window.setSize(500,300);
         centreWindow(window);
 
@@ -160,7 +162,7 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
             b.setLabel("Stop");
             timeHold = time.getText();
-            setTimer();
+
 
             b.addKeyListener(this);
 
@@ -208,8 +210,8 @@ class AppBody extends Frame implements ActionListener, WindowListener, KeyListen
 
 
 
-                            }
-                }
+                        }
+                    }
 
 
                 }

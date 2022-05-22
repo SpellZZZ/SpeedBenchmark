@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 /**
  * @author imssbora
  *
- */
+
 public class Chart extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -72,4 +72,4 @@ public class Chart extends JFrame {
             example.setVisible(true);
         });
     }
-}
+} */

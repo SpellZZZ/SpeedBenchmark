@@ -1,6 +1,6 @@
 public class Calculate {
     public static double getBPM(int taps, int podzielnik, double time){
-            double wynik = 0;
+            double wynik;
             double  t = taps,
                     p = podzielnik,
                     times = time;

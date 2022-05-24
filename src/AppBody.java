@@ -1,3 +1,5 @@
+import org.jfree.chart.ChartPanel;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -54,7 +56,18 @@ private
 
 ////////////////////////////////////
 
+
+
+
+
+
     public AppBody() {
+
+        //Chart ex = new Chart();
+        //ex.setVisible(true);
+
+        ChartPanel x = Chart.initUI();
+
         window =  new JFrame();
 
         centreWindow(window);
@@ -74,6 +87,7 @@ private
         window.add(panelMain, BorderLayout.NORTH);
         window.add(panelResult,BorderLayout.CENTER);
         window.add(panelTime,BorderLayout.SOUTH);
+        window.add(x,BorderLayout.WEST);
 
         bStart.addActionListener(this);
         rRestart.addActionListener(this);

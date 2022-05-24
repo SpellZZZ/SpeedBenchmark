@@ -19,12 +19,12 @@ import java.awt.Font;
 
 public class Chart extends JFrame {
 
-    public Chart() {
+    /*public Chart() {
 
         initUI();
-    }
+    }*/
 
-    private void initUI() {
+    public static ChartPanel initUI() {
 
         XYDataset dataset = createDataset();
         JFreeChart chart = createChart(dataset);
@@ -32,15 +32,15 @@ public class Chart extends JFrame {
         chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         chartPanel.setBackground(Color.white);
 
-        add(chartPanel);
-
-        pack();
+        return chartPanel;
+        //add(chartPanel);
+        /*pack();
         setTitle("Line chart");
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
     }
 
-    private XYDataset createDataset() {
+    private static XYDataset createDataset() {
 
         var series1 = new XYSeries("2014");
         series1.add(18, 530);
@@ -50,22 +50,14 @@ public class Chart extends JFrame {
         series1.add(40, 1300);
         series1.add(50, 2219);
 
-        /*var series2 = new XYSeries("2016");
-        series2.add(18, 567);
-        series2.add(20, 612);
-        series2.add(25, 800);
-        series2.add(30, 980);
-        series2.add(40, 1210);
-        series2.add(50, 2350);
-*/
         var dataset = new XYSeriesCollection();
         dataset.addSeries(series1);
-      //  dataset.addSeries(series2);
+
 
         return dataset;
     }
 
-    private JFreeChart createChart(final XYDataset dataset) {
+    private static JFreeChart createChart(final XYDataset dataset) {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 "Line chart",
@@ -92,7 +84,6 @@ public class Chart extends JFrame {
         plot.setRangeGridlinesVisible(false);
         plot.setDomainGridlinesVisible(false);
 
-        //chart.getLegend().setID(String.valueOf(BlockBorder.NONE));
 
         chart.setTitle(new TextTitle("Chart",
                         new Font("Serif", Font.BOLD, 18)
@@ -102,12 +93,4 @@ public class Chart extends JFrame {
         return chart;
     }
 
-    public static void drawChart() {
-
-        EventQueue.invokeLater(() -> {
-
-            var ex = new Chart();
-            ex.setVisible(true);
-        });
-    }
 }

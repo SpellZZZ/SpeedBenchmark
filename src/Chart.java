@@ -1,7 +1,8 @@
+
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -16,46 +17,31 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 
 public class Chart extends JFrame {
 
-    /*public Chart() {
+    static XYSeries  series1 = new XYSeries("Line");
+    static XYSeriesCollection datasetXY;
 
-        initUI();
-    }*/
 
-    public static ChartPanel initUI() {
 
-        XYDataset dataset = createDataset();
+    public static ChartPanel initUI()  {
+
+
+        datasetXY = new XYSeriesCollection();
+        datasetXY.addSeries(series1);
+
+        XYDataset dataset = datasetXY;
         JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        //chartPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 1));
         chartPanel.setBackground(Color.white);
 
         return chartPanel;
-        //add(chartPanel);
-        /*pack();
-        setTitle("Line chart");
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
     }
 
-    private static XYDataset createDataset() {
 
-        var series1 = new XYSeries("2014");
-        series1.add(18, 530);
-        series1.add(20, 580);
-        series1.add(25, 740);
-        series1.add(30, 901);
-        series1.add(40, 1300);
-        series1.add(50, 2219);
-
-        var dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-
-
-        return dataset;
-    }
 
     private static JFreeChart createChart(final XYDataset dataset) {
 
@@ -65,8 +51,8 @@ public class Chart extends JFrame {
                 "BPM",
                 dataset,
                 PlotOrientation.VERTICAL,
-                true,
-                true,
+                false,
+                false,
                 false
         );
 
@@ -75,9 +61,9 @@ public class Chart extends JFrame {
         var renderer = new XYLineAndShapeRenderer();
 
         renderer.setSeriesPaint(0, Color.RED);
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-        renderer.setSeriesPaint(1, Color.BLUE);
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(0, new BasicStroke(1));
+
+
 
         plot.setRenderer(renderer);
         plot.setBackgroundPaint(Color.white);
@@ -92,5 +78,19 @@ public class Chart extends JFrame {
 
         return chart;
     }
+
+
+
+    public static void addValue(double bpm, double time) {
+
+        if(bpm <400 ) series1.add(time,bpm);
+    }
+
+    public static void clear() {
+
+        series1.clear();
+
+    }
+
 
 }

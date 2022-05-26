@@ -2,7 +2,10 @@ import org.jfree.chart.ChartPanel;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 import javax.swing.*;
+import javax.swing.text.*;
+
 
 class AppBody extends Frame implements ActionListener, KeyListener {
 
@@ -19,7 +22,6 @@ private
     TimerBuild timerInit;
     Timer timer;
     static final int TIMER_DELAY = 0;
-    String timeTemp;
     String timeTempRightNow;
     double time;
     double timePreviousRun;
@@ -32,11 +34,21 @@ private
     JPanel panelResult = new JPanel();
 
     // JTextField, initial value (top panel)
-    JTextField tKey1 = new JTextField("b",2);
-    JTextField tKey2 = new JTextField("n",2);
-    JTextField tTime = new JTextField("2",2);
-    JTextField tPodz = new JTextField("4",2);
+    JTextField tKey1 = new JTextField("",2);
+    JTextField tKey2 = new JTextField("",2);
     JTextField timeField = new JTextField(5);
+
+
+
+    // JComboBox
+    //JTextField tPodz = new JTextField("4",2);
+    String[] listP= { "1/1","1/2","1/3","1/4","1/5", "1/6","1/7","1/8", "1/9","1/12","1/16"};
+    JComboBox<String> tPodz = new JComboBox<>(listP);
+
+
+    // JSpinner
+    SpinnerNumberModel model1 = new SpinnerNumberModel(2.0, 1.0, 10.0, 1.0);
+    JSpinner tTime = new JSpinner(model1);
 
     // JLabel, (top panel)
     JLabel lKey1 = new JLabel("Key1");
@@ -54,19 +66,16 @@ private
     Button bStart = new Button("Start");
     Button rRestart = new Button("Restart");
 
+
+    ChartPanel graph;
+
 ////////////////////////////////////
 
 
+    public AppBody(){
 
 
-
-
-    public AppBody() {
-
-        //Chart ex = new Chart();
-        //ex.setVisible(true);
-
-        ChartPanel x = Chart.initUI();
+         graph = Chart.initUI();
 
         window =  new JFrame();
 
@@ -87,10 +96,11 @@ private
         window.add(panelMain, BorderLayout.NORTH);
         window.add(panelResult,BorderLayout.CENTER);
         window.add(panelTime,BorderLayout.SOUTH);
-        window.add(x,BorderLayout.WEST);
+        window.add(graph,BorderLayout.WEST);
 
         bStart.addActionListener(this);
         rRestart.addActionListener(this);
+        tPodz.addActionListener(this);
 
         window.pack();
         window.setVisible(true);
@@ -107,6 +117,15 @@ private
         panelTime.setBackground(Color.LIGHT_GRAY);
     }
     public void setMenu(){
+
+        tKey1.setDocument(new LimitJTextField(1));
+        tKey2.setDocument(new LimitJTextField(1));
+        tPodz.setSelectedIndex(3);
+
+
+
+        tKey1.setText("b");
+        tKey2.setText("n");
         panelMain.add(lKey1);
         panelMain.add(tKey1);
         panelMain.add(lKey2);
@@ -147,12 +166,27 @@ private
 
             setTimer();
             bStart.setLabel("Stop");
-            timeTemp = tTime.getText();
             bStart.addKeyListener(this);
             isRunning = true;
 
-            podzielnikTemp = tPodz.getText();
-            podzielnik = Integer.parseInt(podzielnikTemp);
+
+            podzielnikTemp=  Objects.requireNonNull(tPodz.getSelectedItem()).toString();
+
+            switch (podzielnikTemp) {
+                case "1/1" -> podzielnik = 1;
+                case "1/2" -> podzielnik = 2;
+                case "1/3" -> podzielnik = 3;
+                case "1/5" -> podzielnik = 5;
+                case "1/6" -> podzielnik = 6;
+                case "1/7" -> podzielnik = 7;
+                case "1/8" -> podzielnik = 8;
+                case "1/9" -> podzielnik = 9;
+                case "1/12" -> podzielnik = 12;
+                case "1/16" -> podzielnik = 16;
+                default -> podzielnik = 4;
+            }
+
+
 
 
             Thread t = new Thread(() -> {
@@ -167,13 +201,22 @@ private
                         bpm = Calculate.getBPM(taps,podzielnik, time);
                         bpm = Math.round(bpm);
 
+
                         result.setText("<html>" +
                                 "Taps: " + taps +
                                 "<br/>" +
                                 "BPM: " + bpm +
                                 "</html>");
 
-                        String timeFromField = tTime.getText();
+
+                        String timeFromField ;//= tTime.getText();
+                        try {
+                            tTime.commitEdit();
+                        } catch ( java.text.ParseException p ) {
+                            p.printStackTrace();
+                        }
+                        timeFromField = String.valueOf(tTime.getValue());
+
                         if(time >= Double.parseDouble(timeFromField) && timePreviousRun != time){
                             timePreviousRun = time;
                             System.out.println("bpm "+ bpm);
@@ -194,13 +237,10 @@ private
             stop();
             bStart.removeKeyListener(this);
             isRunning = false;
-
         }
         if (s.equals("Restart")) {
             timerRestart();
         }
-
-
     }
     @Override
     public void keyReleased (KeyEvent e) {
@@ -224,12 +264,42 @@ private
 
         if (k1.compareTo(key) == 0 || k2.compareTo(key) == 0) {
 
-            if(!timer.isRunning()) timer.start();
+            if(!timer.isRunning())
+            {
+                timer.start();
+
+            }
+
+
+            if(taps > 0){
+                Chart.addValue(bpm, time);
+            } else if(taps == 0) {
+                Chart.clear();
+            }
 
             taps++;
+
         }
     }
 
-    public void keyPressed(KeyEvent e) {}
     public void keyTyped (KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {}
+
+
+}
+
+
+class LimitJTextField extends PlainDocument {
+    private final int max;
+    LimitJTextField(int max) {
+        super();
+        this.max = max;
+    }
+    public void insertString(int offset, String text, AttributeSet attr) throws BadLocationException {
+        if (text == null)
+            return;
+        if ((getLength() + text.length()) <= max) {
+            super.insertString(offset, text, attr);
+        }
+    }
 }

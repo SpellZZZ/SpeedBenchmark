@@ -1,5 +1,4 @@
 
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -11,13 +10,10 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 
 public class Chart extends JFrame {
 
@@ -35,8 +31,8 @@ public class Chart extends JFrame {
         XYDataset dataset = datasetXY;
         JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        //chartPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 1));
-        chartPanel.setBackground(Color.white);
+
+
 
         return chartPanel;
     }
@@ -56,25 +52,30 @@ public class Chart extends JFrame {
                 false
         );
 
+
         XYPlot plot = chart.getXYPlot();
 
         var renderer = new XYLineAndShapeRenderer();
 
-        renderer.setSeriesPaint(0, Color.RED);
+        renderer.setSeriesPaint(0, new Color(	222, 68, 80));
         renderer.setSeriesStroke(0, new BasicStroke(1));
 
 
-
         plot.setRenderer(renderer);
-        plot.setBackgroundPaint(Color.white);
+        plot.setBackgroundPaint(new Color(36, 24, 38));
         plot.setRangeGridlinesVisible(false);
         plot.setDomainGridlinesVisible(false);
 
 
-        chart.setTitle(new TextTitle("Chart",
+        chart.setTitle(new TextTitle("",
                         new Font("Serif", Font.BOLD, 18)
                 )
         );
+        chart.setBackgroundPaint(new Color(38, 35, 53));
+
+        //Foreground(new Color(	111, 138, 233));
+
+
 
         return chart;
     }
@@ -82,7 +83,6 @@ public class Chart extends JFrame {
 
 
     public static void addValue(double bpm, double time) {
-
         if(bpm <400 ) series1.add(time,bpm);
     }
 

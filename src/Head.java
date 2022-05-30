@@ -1,6 +1,3 @@
-import java.util.Scanner;
-import java.util.Set;
-
 public class Head {
 
     public static void main(String[] args) {
@@ -10,7 +7,6 @@ public class Head {
         Settings item = new Settings();
 
         AppBody obj = new AppBody();
-              //  obj.window(item);
 
 
 
